@@ -1,0 +1,16 @@
+{
+  "name": "ecomap",
+  "version": "1.0.0",
+  "description": "EcoMap — Localized Air & Noise Pollution Dashboard",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "pdfkit": "^0.15.2"
+  }
+}

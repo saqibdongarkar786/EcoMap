@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EcoMap · Localized Air &amp; Noise Pollution Dashboard</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌍</text></svg>" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Loading overlay: visible until GPS resolves or fallback kicks in -->
+  <div id="loading-overlay">
+    <div class="loader"></div>
+    <p>Finding your neighborhood…</p>
+    <small>Allow location access for hyper-local readings.</small>
+  </div>
+
+  <header class="app-header">
+    <div class="brand">
+      <span class="brand-icon">🌍</span>
+      <div>
+        <h1>EcoMap</h1>
+        <p>Localized Air &amp; Noise Pollution</p>
+      </div>
+    </div>
+    <button id="download-report-btn" class="btn-primary" title="Download a PDF report for this locality">
+      ⬇ Download Locality Report (PDF)
+    </button>
+  </header>
+
+  <main class="dashboard">
+    <div id="map"></div>
+
+    <aside class="panel" id="side-panel">
+      <h2>Legend</h2>
+
+      <div class="legend-section">
+        <h3>Air Quality Index</h3>
+        <ul class="legend-list">
+          <li><span class="swatch" style="background:#22c55e"></span> Good <em>0–50</em></li>
+          <li><span class="swatch" style="background:#eab308"></span> Moderate <em>51–100</em></li>
+          <li><span class="swatch" style="background:#f97316"></span> Poor (USG) <em>101–150</em></li>
+          <li><span class="swatch" style="background:#ef4444"></span> Unhealthy <em>151–200</em></li>
+          <li><span class="swatch" style="background:#a855f7"></span> Very Unhealthy <em>201–300</em></li>
+          <li><span class="swatch" style="background:#7f1d1d"></span> Hazardous <em>300+</em></li>
+        </ul>
+      </div>
+
+      <div class="legend-section">
+        <h3>Noise (dB)</h3>
+        <div class="noise-bar"></div>
+        <div class="noise-scale"><span>30</span><span>50</span><span>70</span><span>90+</span></div>
+      </div>
+
+      <div class="legend-section">
+        <label class="switch-row" for="alerts-toggle">
+          <span>
+            <strong>Enable Hazard Alerts</strong>
+            <small id="alert-status">Alerts are off</small>
+          </span>
+          <span class="switch">
+            <input type="checkbox" id="alerts-toggle" />
+            <span class="slider"></span>
+          </span>
+        </label>
+      </div>
+
+      <div class="legend-section">
+        <h3>Local Snapshot</h3>
+        <div class="stat-grid">
+          <div class="stat"><span id="stat-avg-aqi">–</span><label>Avg AQI</label></div>
+          <div class="stat"><span id="stat-peak-aqi">–</span><label>Peak AQI</label></div>
+          <div class="stat"><span id="stat-avg-noise">–</span><label>Avg dB</label></div>
+          <div class="stat"><span id="stat-nodes">–</span><label>Nodes</label></div>
+        </div>
+        <p id="snapshot-note" class="snapshot-note">Waiting for data…</p>
+      </div>
+    </aside>
+
+    <div id="toast-container" aria-live="polite"></div>
+  </main>
+
+  <footer class="app-footer">
+    <div class="time-control">
+      <label for="time-slider">Time of Day · <output id="time-label">08:00</output></label>
+      <input type="range" id="time-slider" min="0" max="23" step="1" value="8" />
+      <div class="time-ticks"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div>
+    </div>
+    <div class="view-toggle" role="group" aria-label="Metric view">
+      <button id="view-aqi" class="active" type="button">🌫 AQI</button>
+      <button id="view-noise" type="button">🔊 Noise</button>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="app.js"></script>
+</body>
+</html>
