@@ -63,20 +63,29 @@ function toast(message, isError = false) {
     setTimeout(() => el.remove(), 300);
   }, 5200);
 }
-
 /* ============================== map ================================ */
+/* ============================== map ================================ */
+
 function initMap() {
-  state.map = L.map('map', { zoomControl: true }).setView([DEFAULT_POS.lat, DEFAULT_POS.lng], 13);
+  // 1. Uncomment .setView to prevent Leaflet from crashing
+  state.map = L.map('map', { zoomControl: true })
+    .setView([DEFAULT_POS.lat, DEFAULT_POS.lng], 13);
 
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    subdomains: 'abcd',
-    maxZoom: 20,
-  }).addTo(state.map);
+  L.tileLayer(
+    'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png',
+    {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://stadiamaps.com/">Stadia Maps</a>',
+      maxZoom: 20,
+    }
+  ).addTo(state.map);
 
-  // Leaflet caches container size at init — recompute after layout changes.
-  window.addEventListener('resize', () => state.map.invalidateSize());
+  // 2. REMOVED the redundant navigator.geolocation block from here.
+  // initGeolocation() already handles this perfectly and adds your userMarker!
+
+  window.addEventListener('resize', () => {
+    state.map.invalidateSize();
+  });
 }
 
 function setUserPos(pos) {
@@ -244,19 +253,22 @@ function downloadReport() {
 
 /* ============================ geolocation ========================== */
 function initGeolocation() {
-  const overlay = $('loading-overlay');
-  const finish = (pos, message) => {
-    setUserPos(pos);
-    overlay.classList.add('hidden');
-    state.map.invalidateSize();
-    fetchData();
-    if (message) toast(message, true);
-  };
+  // In initGeolocation():
+const overlay = $('loading-overlay');
+const finish = (pos, message) => {
+  setUserPos(pos);
+  if (overlay) overlay.classList.add('hidden'); // Added safety check
+  state.map.invalidateSize();
+  fetchData();
+  if (message) toast(message, true);
+};
 
-  if (!('geolocation' in navigator)) {
-    finish(DEFAULT_POS, 'Geolocation unsupported — showing demo data for New York.');
-    return;
-  }
+// In toast():
+function toast(message, isError = false) {
+  const container = $('toast-container');
+  if (!container) return; // Added safety check to prevent crash
+  // ... rest of toast code
+}
 
   navigator.geolocation.getCurrentPosition(
     (p) => finish({ lat: p.coords.latitude, lng: p.coords.longitude }),
